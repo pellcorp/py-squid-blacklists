@@ -6,8 +6,8 @@ import re
 import logging
 import time
 from urlparse import urlparse
+from config import *
 
-blacklists_dir = "/home/paul/blacklists/"
 domain_files = [os.path.join(dp, f) for dp, dn, fn in os.walk(os.path.expanduser(blacklists_dir)) for f in fn if re.match(r"domains*", f)]
 
 def make_list(files):
