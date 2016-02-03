@@ -1,17 +1,22 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 
 import sys
 import os
 import re
 import logging
 import time
+import urllib
 from urlparse import urlparse
-from config import *
+try:
+	from config import *
+except ImportError:
+	print("Please create config.py using config.py.sample")
+	exit()
 
 domain_files = [os.path.join(dp, f) for dp, dn, fn in os.walk(os.path.expanduser(blacklists_dir)) for f in fn if re.match(r"domains*", f)]
 
 def make_list(files):
-	blacklists=[]
+	blacklists = []
 	for f in files:
 		splitlist = f.split("/")
 		list_type = splitlist[len(splitlist)-2]
@@ -21,35 +26,31 @@ def make_list(files):
 def make_db(blacklist_files):
 	lib = dict()
 	for blacklist in blacklist_files:
-		cache= dict()
-		values=[]
+		cache = dict()
+		values = []
 		f = open(blacklist[1], "r")
 		for line in f:
 			cache[line.strip("\n")] = True
-		lib[blacklist[0]]=cache
+		lib[blacklist[0]] = cache
 	return lib
 
-def compare(outline,blacklist_cache):
+def compare(outline,blacklist_cache,blacklists):
 	result = False
-	while not result and outline != "":
-		try:
-			result=blacklist_cache['adult'][outline]
-		except KeyError:
-			pass
-		outline = outline.partition('.')[2]
+	for blacklist in blacklists:
+		while not result and outline != "":
+			try:
+				result = blacklist_cache[blacklist][outline]
+			except KeyError:
+				pass
+			outline = outline.partition('.')[2]
 	return result
 
-def grant():
-	sys.stdout.write( 'OK\n' )
-	sys.stdout.flush()
-
-def deny():
-	sys.stdout.write( 'ERR\n' )
+def squid_response(response):
+	sys.stdout.write("%s\n" % response)
 	sys.stdout.flush()
 
 
 blacklist_cache=[]
-
 blacklist_files = make_list(domain_files)
 blacklist_cache = make_db(blacklist_files)
 
@@ -57,7 +58,7 @@ while True:
 	line = sys.stdin.readline().strip()
 	outline = urlparse(line).netloc
 	if line:
-		if compare(outline,blacklist_cache):
-			grant()
+		if compare(outline,blacklist_cache,blacklists):
+			squid_response("OK")
 		else:
-			deny()
+			squid_response("ERR")
