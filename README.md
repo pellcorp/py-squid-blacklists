@@ -17,3 +17,22 @@ acl urlblacklist external urlblacklist_lookup
 ...
 http_access deny urlblacklist
 ```
+
+config.py file must be include following statements
+```
+blacklists_fetch = "http://dsi.ut-capitole.fr/blacklists/download/blacklists.tar.gz"
+blacklists_dir = "/usr/local/py-squid-blacklists/blacklists/"
+blacklists = ["adult","malware"]
+```
+
+blacklists_fetch : squidguard-like blacklists files, this variable is not already usable
+blacklists_dir : path containing blacklists files
+blacklists : blacklists to use for filtering
+
+## TODO
+
+* Auto-fetcher using blacklists_fetch if blacklists are not already downloaded or stored on the squid machine
+* Compatibility with python3 only
+* Filters for regex urls
+* Tests
+* ...
