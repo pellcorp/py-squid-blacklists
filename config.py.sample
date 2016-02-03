@@ -1,1 +1,2 @@
-blacklists_dir = "/home/paul/blacklists/"
+blacklists_dir = "/usr/local/py-squid-blacklists/blacklists/"
+blacklists = ["adult","malware"]
