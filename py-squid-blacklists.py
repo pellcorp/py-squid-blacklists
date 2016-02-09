@@ -50,13 +50,13 @@ def squid_response(response):
 	sys.stdout.flush()
 
 
-blacklist_cache=[]
+blacklist_cache = []
 blacklist_files = make_list(domain_files)
 blacklist_cache = make_db(blacklist_files)
 
 while True:
-	line = sys.stdin.readline().strip()
-	outline = urlparse(line).netloc
+	l = sys.stdin.readline().strip()
+	outline = urlparse(l).netloc
 	if line:
 		if compare(outline,blacklist_cache,blacklists):
 			squid_response("OK")
