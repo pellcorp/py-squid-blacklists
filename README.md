@@ -25,9 +25,9 @@ blacklists_dir = "/usr/local/py-squid-blacklists/blacklists/"
 blacklists = ["adult","malware"]
 ```
 
-blacklists_fetch : squidguard-like blacklists files, this variable is not already usable
-blacklists_dir : path containing blacklists files
-blacklists : blacklists to use for filtering
+* blacklists_fetch : squidguard-like blacklists files, this variable is not already usable
+* blacklists_dir : path containing blacklists files
+* blacklists : blacklists to use for filtering
 
 ## TODO
 
