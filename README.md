@@ -34,5 +34,7 @@ blacklists = ["adult","malware"]
 * Auto-fetcher using blacklists_fetch if blacklists are not already downloaded or stored on the squid machine
 * Compatibility with python3 only
 * Filters for regex urls
+* Reduce memory footprint
+* Code optimisation
 * Tests
 * ...
