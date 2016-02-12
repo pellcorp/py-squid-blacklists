@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2.7
 
 import sys
 import os
@@ -37,12 +37,14 @@ def make_db(blacklist_files):
 def compare(outline,blacklist_cache,blacklists):
 	result = False
 	for blacklist in blacklists:
-		while not result and outline != "":
+		tmpline = outline
+		while not result and tmpline != "":
 			try:
-				result = blacklist_cache[blacklist][outline]
+				result = blacklist_cache[blacklist][tmpline]
+				pass
 			except KeyError:
 				pass
-			outline = outline.partition('.')[2]
+			tmpline = tmpline.partition('.')[2]
 	return result
 
 def squid_response(response):
@@ -50,13 +52,13 @@ def squid_response(response):
 	sys.stdout.flush()
 
 
-blacklist_cache = []
+blacklist_cache=[]
 blacklist_files = make_list(domain_files)
 blacklist_cache = make_db(blacklist_files)
 
 while True:
-	l = sys.stdin.readline().strip()
-	outline = urlparse(l).netloc
+	line = sys.stdin.readline().strip()
+	outline = urlparse(line).netloc
 	if line:
 		if compare(outline,blacklist_cache,blacklists):
 			squid_response("OK")
