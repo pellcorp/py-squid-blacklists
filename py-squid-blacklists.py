@@ -4,7 +4,6 @@ import sys
 import os
 import re
 import logging
-import time
 import urllib
 from urlparse import urlparse
 try:
@@ -17,21 +16,21 @@ domain_files = [os.path.join(dp, f) for dp, dn, fn in os.walk(os.path.expanduser
 
 def make_list(files):
 	blacklists = []
-	for f in files:
-		splitlist = f.split("/")
+	for l in files:
+		splitlist = l.split("/")
 		list_type = splitlist[len(splitlist)-2]
-		blacklists.append([list_type,f])
+		blacklists.append([list_type,l])
 	return blacklists
 
 def make_db(blacklist_files):
 	lib = dict()
 	for blacklist in blacklist_files:
 		cache = dict()
-		values = []
 		f = open(blacklist[1], "r")
 		for line in f:
 			cache[line.strip("\n")] = True
 		lib[blacklist[0]] = cache
+		del cache
 	return lib
 
 def compare(outline,blacklist_cache,blacklists):
@@ -52,7 +51,7 @@ def squid_response(response):
 	sys.stdout.flush()
 
 
-blacklist_cache=[]
+blacklist_cache = []
 blacklist_files = make_list(domain_files)
 blacklist_cache = make_db(blacklist_files)
 
