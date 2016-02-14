@@ -36,5 +36,6 @@ blacklists = ["adult","malware"]
 * Filters for regex urls
 * Reduce memory footprint
 * Code optimisation
+* Use of constant database (CDB) for on-disk store : https://github.com/acg/python-cdb
 * Tests
 * ...
