@@ -24,25 +24,30 @@ def make_list(files):
 		blacklists.append([list_type,l])
 	return blacklists
 
-def make_db(blacklist_files,blacklists):
-	lib = dict()
+def make_db(blacklist_files,config):
+	lib = []
 	for bl in blacklist_files:
-		if(bl[0] in blacklists):
-			cache = dict()
-			f = open(bl[1], "r")
-			for line in f:
-				cache[line.strip("\n")] = True
-			lib[bl[0]] = cache
-			del cache
+		bl_cdb_file = ("%s/%s.cdb" % (config.blacklists_dir,bl[0]))
+		bl_cdb_file_tmp = ("%s/%s.tmp" % (config.blacklists_dir,bl[0]))
+		if(bl[0] in config.blacklists):
+			if not os.path.isfile(bl_cdb_file):			
+				cdb_file = cdb.cdbmake(bl_cdb_file,bl_cdb_file_tmp)
+				cache = dict()
+				f = open(bl[1], "r")
+				for line in f:
+					cdb_file.add(line.strip("\n"),"True")
+				cdb_file.finish()
+			lib.append(bl_cdb_file)
 	return lib
 
 def compare(outline,blacklist_cache):
 	result = False
 	for blacklist in blacklist_cache:
+		cdb_file = cdb.init(blacklist)
 		tmpline = outline
 		while not result and tmpline != "":
 			try:
-				result = blacklist_cache[blacklist][tmpline]
+				result = cdb_file[tmpline]
 				pass
 			except KeyError:
 				pass
@@ -56,7 +61,7 @@ def squid_response(response):
 domain_files = [os.path.join(dp, f) for dp, dn, fn in os.walk(os.path.expanduser(config.blacklists_dir)) for f in fn if re.match(r"domains*", f)]
 
 blacklist_files = make_list(domain_files)
-blacklist_cache = make_db(blacklist_files,config.blacklists)
+blacklist_cache = make_db(blacklist_files,config)
 
 while True:
 	line = sys.stdin.readline().strip()

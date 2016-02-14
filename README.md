@@ -2,10 +2,10 @@
 Squid helper handling squidguard blacklists written in python
 
 * Only supports domains blacklists actually (ie : google.com, www.google.com, api.google.com, etc.)
-* In config specified blacklists are loaded in RAM
+* In config specified blacklists are loaded in RAM or CDB backend using https://github.com/acg/python-cdb (testing flavour is available)
 * Usable as an external acl plugin of squid
 * Written because of poor developpement on squidguard and bad support of blacklists files using squid3
-* Tested on Debian 8 / python 2.7.9
+* Tested on Debian 8 / python 2.7.9 / squid 3.4.8
 
 ## Usage
 
@@ -34,14 +34,14 @@ blacklists = ["adult","malware"]
 * Auto-fetcher using blacklists_fetch if blacklists are not already downloaded or stored on the squid machine
 * Compatibility with python3 only
 * Filters for regex urls
-* Reduce memory footprint
+* Reduce memory footprint (wip with CDB backend alternative)
 * Code optimisation (wip)
-* Use of constant database (CDB) for on-disk store : https://github.com/acg/python-cdb
-* Tests
+* Object oriented programming
+* Tests (wip)
 * ...
 
 ## DBs support ideas
 
-* High performances but heavy RAM usage when using dict()
+* High performance but heavy RAM usage when using dict()
 * Sqlite3 tested, light memory footprint, but very slow
-* CDB to be tested, but need for speed
+* CDB backend testing
