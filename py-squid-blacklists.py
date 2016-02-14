@@ -3,16 +3,18 @@
 import sys
 import os
 import re
-import logging
 import urllib
 from urlparse import urlparse
 try:
-	from config import *
+	import config
 except ImportError:
 	print("Please create config.py using config.py.sample")
 	exit()
-
-domain_files = [os.path.join(dp, f) for dp, dn, fn in os.walk(os.path.expanduser(blacklists_dir)) for f in fn if re.match(r"domains*", f)]
+try:
+	import cdb
+except ImportError:
+	print("Please install python-cdb from pypi or via package manager")
+	exit()
 
 def make_list(files):
 	blacklists = []
@@ -22,20 +24,21 @@ def make_list(files):
 		blacklists.append([list_type,l])
 	return blacklists
 
-def make_db(blacklist_files):
+def make_db(blacklist_files,blacklists):
 	lib = dict()
-	for blacklist in blacklist_files:
-		cache = dict()
-		f = open(blacklist[1], "r")
-		for line in f:
-			cache[line.strip("\n")] = True
-		lib[blacklist[0]] = cache
-		del cache
+	for bl in blacklist_files:
+		if(bl[0] in blacklists):
+			cache = dict()
+			f = open(bl[1], "r")
+			for line in f:
+				cache[line.strip("\n")] = True
+			lib[bl[0]] = cache
+			del cache
 	return lib
 
-def compare(outline,blacklist_cache,blacklists):
+def compare(outline,blacklist_cache):
 	result = False
-	for blacklist in blacklists:
+	for blacklist in blacklist_cache:
 		tmpline = outline
 		while not result and tmpline != "":
 			try:
@@ -50,16 +53,16 @@ def squid_response(response):
 	sys.stdout.write("%s\n" % response)
 	sys.stdout.flush()
 
+domain_files = [os.path.join(dp, f) for dp, dn, fn in os.walk(os.path.expanduser(config.blacklists_dir)) for f in fn if re.match(r"domains*", f)]
 
-blacklist_cache = []
 blacklist_files = make_list(domain_files)
-blacklist_cache = make_db(blacklist_files)
+blacklist_cache = make_db(blacklist_files,config.blacklists)
 
 while True:
 	line = sys.stdin.readline().strip()
 	outline = urlparse(line).netloc
 	if line:
-		if compare(outline,blacklist_cache,blacklists):
+		if compare(outline,blacklist_cache):
 			squid_response("OK")
 		else:
 			squid_response("ERR")
