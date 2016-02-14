@@ -10,6 +10,11 @@ try:
 except ImportError:
 	print("Please create config.py using config.py.sample")
 	exit()
+try:
+	import cdb
+except ImportError:
+	print("Please install python-cdb from pypi or via package manager")
+	exit()
 
 def make_list(files):
 	blacklists = []
