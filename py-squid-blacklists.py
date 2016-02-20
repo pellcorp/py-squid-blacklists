@@ -20,11 +20,12 @@ except ImportError:
 class PySquidBlacklists:
     def __init__(self, config):
         self.db_backend = config.db_backend
-        self.blacklist_categories = config.categories
-        self.domain_files = [os.path.join(dp, f) for dp, dn, fn in os.walk(os.path.expanduser(config.base_dir)) for f in
+        self.categories = config.categories
+        self.base_dir = config.base_dir
+        self.domain_files = [os.path.join(dp, f) for dp, dn, fn in os.walk(os.path.expanduser(self.base_dir)) for f in
                              fn if re.match(r"domains*", f)]
         self.blacklist_files = self.make_list()
-        self.blacklist_cache = self.make_db()
+        self.cache = self.make_db()
 
     def make_list(self):
         blacklists = []
@@ -37,26 +38,23 @@ class PySquidBlacklists:
     def make_db(self):
         lib = dict()
         for bls in self.blacklist_files:
-            if bls[0] in self.blacklist_categories:
-                cache = dict()
-                f = open(bls[1], "r")
-                for l in f:
-                    cache[l.strip("\n")] = True
-                lib[bls[0]] = cache
-                del cache
+            if self.db_backend == "ram":
+                if bls[0] in self.categories:
+                    cache = dict()
+                    f = open(bls[1], "r")
+                    for l in f:
+                        cache[l.strip("\n")] = True
+                    lib[bls[0]] = cache
+                    del cache
         return lib
-
-    @property
-    def initialize():
-        return True
 
     def compare(self, outline):
         result = False
-        for blacklist in self.blacklist_cache:
+        for blacklist in self.cache:
             tmpline = outline
             while not result and tmpline != "":
                 try:
-                    result = self.blacklist_cache[blacklist][tmpline]
+                    result = self.cache[blacklist][tmpline]
                     pass
                 except KeyError:
                     pass

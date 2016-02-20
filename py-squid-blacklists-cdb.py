@@ -34,7 +34,6 @@ def make_db(blacklist_files, config):
         if (bl[0] in config.blacklists):
             if not os.path.isfile(bl_cdb_file):
                 cdb_file = cdb.cdbmake(bl_cdb_file, bl_cdb_file_tmp)
-                cache = dict()
                 f = open(bl[1], "r")
                 for line in f:
                     cdb_file.add(line.strip("\n"), "True")
