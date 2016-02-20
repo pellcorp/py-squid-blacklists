@@ -64,3 +64,4 @@ target/
 config.py
 blacklists
 blacklists.tar.gz
+pysquidblacklists/
