@@ -5,7 +5,6 @@ Squid helper handling squidguard blacklists written in python
 * In config specified blacklists are loaded in RAM or CDB backend using https://github.com/acg/python-cdb (testing flavour is available)
 * Usable as an external acl plugin of squid
 * Written because of poor developpement on squidguard and bad support of blacklists files using squid3
-* Tested on Debian 8 / python 2.7.9 / squid 3.4.8
 
 ## Usage
 
@@ -47,3 +46,13 @@ db_backend = "ram"
 * High performance but heavy RAM usage when using dict()
 * Sqlite3 tested, small memory footprint, but very slow
 * CDB backend seems to be as fast as attended, with a very small footprint
+
+
+## DBs Benchmarks
+
+RAM usage For one thread with categories ["adult","malware"]
+
+Debian 8 / python 2.7.9 / squid 3.4.8
+
+* ram : 90Mo
+* cdb : 6Mo
