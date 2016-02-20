@@ -3,7 +3,6 @@
 import sys
 import os
 import re
-import urllib
 from urlparse import urlparse
 
 try:

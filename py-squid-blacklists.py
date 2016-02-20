@@ -3,7 +3,6 @@
 import sys
 import os
 import re
-import urllib
 from urlparse import urlparse
 
 try:
@@ -11,62 +10,81 @@ try:
 except ImportError:
     print("Please create config.py using config.py.sample")
     exit()
+try:
+    import cdb
+except ImportError:
+    print("Please install python-cdb from pypi or via package manager")
+    exit()
 
 
-def make_list(files):
-    blacklists = []
-    for l in files:
-        splitlist = l.split("/")
-        list_type = splitlist[len(splitlist) - 2]
-        blacklists.append([list_type, l])
-    return blacklists
+class PySquidBlacklists:
+    def __init__(self, config):
+        self.db_backend = config.db_backend
+        self.blacklist_categories = config.categories
+        self.domain_files = [os.path.join(dp, f) for dp, dn, fn in os.walk(os.path.expanduser(config.base_dir)) for f in
+                             fn if re.match(r"domains*", f)]
+        self.blacklist_files = self.make_list()
+        self.blacklist_cache = self.make_db()
+
+    def make_list(self):
+        blacklists = []
+        for l in self.domain_files:
+            splitlist = l.split("/")
+            list_type = splitlist[len(splitlist) - 2]
+            blacklists.append([list_type, l])
+        return blacklists
+
+    def make_db(self):
+        lib = dict()
+        for bls in self.blacklist_files:
+            if bls[0] in self.blacklist_categories:
+                cache = dict()
+                f = open(bls[1], "r")
+                for l in f:
+                    cache[l.strip("\n")] = True
+                lib[bls[0]] = cache
+                del cache
+        return lib
+
+    @property
+    def initialize():
+        return True
+
+    def compare(self, outline):
+        result = False
+        for blacklist in self.blacklist_cache:
+            tmpline = outline
+            while not result and tmpline != "":
+                try:
+                    result = self.blacklist_cache[blacklist][tmpline]
+                    pass
+                except KeyError:
+                    pass
+                tmpline = tmpline.partition('.')[2]
+        return result
+
+    @staticmethod
+    def response(r):
+        sys.stdout.write("%s\n" % r)
+        sys.stdout.flush()
 
 
-def make_db(blacklist_files, config):
-    lib = dict()
-    for bl in blacklist_files:
-        if (bl[0] in config.blacklists):
-            cache = dict()
-            f = open(bl[1], "r")
-            for line in f:
-                cache[line.strip("\n")] = True
-            lib[bl[0]] = cache
-            del cache
-    return lib
+class PySquidBlacklistsImporter:
+    def __init__(self, conf):
+        self.test = True
+        self.db = conf.db_backend
 
 
-def compare(outline, blacklist_cache):
-    result = False
-    for blacklist in blacklist_cache:
-        tmpline = outline
-        while not result and tmpline != "":
-            try:
-                result = blacklist_cache[blacklist][tmpline]
-                pass
-            except KeyError:
-                pass
-            tmpline = tmpline.partition('.')[2]
-    return result
-
-
-def squid_response(response):
-    sys.stdout.write("%s\n" % response)
-    sys.stdout.flush()
-
-
-domain_files = [os.path.join(dp, f) for dp, dn, fn in os.walk(os.path.expanduser(config.blacklists_dir)) for f in fn if re.match(r"domains*", f)]
-
-blacklist_files = make_list(domain_files)
-blacklist_cache = make_db(blacklist_files, config)
-
+bli = PySquidBlacklistsImporter(config)
+bl = PySquidBlacklists(config)
 while True:
     try:
-     line = sys.stdin.readline().strip()
-     outline = urlparse(line).netloc
-     if line:
-         if compare(outline, blacklist_cache):
-             squid_response("OK")
-         else:
-             squid_response("ERR")
+        line = sys.stdin.readline().strip()
+        outline = urlparse(line).netloc
+        if line:
+            if bl.compare(outline):
+                bl.response("OK")
+            else:
+                bl.response("ERR")
     except KeyboardInterrupt:
         break
