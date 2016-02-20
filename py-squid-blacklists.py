@@ -3,7 +3,6 @@
 import sys
 import os
 import re
-import time
 from urlparse import urlparse
 
 try:
