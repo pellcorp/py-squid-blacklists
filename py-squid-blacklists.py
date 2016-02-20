@@ -3,6 +3,7 @@
 import sys
 import os
 import re
+import time
 from urlparse import urlparse
 
 try:
@@ -78,11 +79,13 @@ bl = PySquidBlacklists(config)
 while True:
     try:
         line = sys.stdin.readline().strip()
+        if line == "":
+            exit()
         outline = urlparse(line).netloc
         if line:
-            if bl.compare(outline):
-                bl.response("OK")
-            else:
-                bl.response("ERR")
-    except KeyboardInterrupt:
-        break
+                if bl.compare(outline):
+                    bl.response("OK")
+                else:
+                    bl.response("ERR")
+    except IOError:
+        pass
