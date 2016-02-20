@@ -11,7 +11,7 @@ Squid helper handling squidguard blacklists written in python
 
 Add this configuration to squid.conf :
 ```
-external_acl_type urlblacklist_lookup ttl=5 %URI /usr/bin/python /usr/local/blacklists/py-squid-blacklists.py
+external_acl_type urlblacklist_lookup ttl=5 %URI /usr/bin/python /usr/local/py-squid-blacklists/py-squid-blacklists.py
 ...
 acl urlblacklist external urlblacklist_lookup
 ...
@@ -45,5 +45,5 @@ db_backend = "ram"
 ## DBs support ideas
 
 * High performance but heavy RAM usage when using dict()
-* Sqlite3 tested, light memory footprint, but very slow
-* CDB backend testing
+* Sqlite3 tested, small memory footprint, but very slow
+* CDB backend seems to be as fast as attended, with a very small footprint
