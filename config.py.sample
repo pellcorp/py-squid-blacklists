@@ -2,7 +2,7 @@
 url = "http://dsi.ut-capitole.fr/blacklists/download/blacklists.tar.gz"
 
 # categories
-categories = ["adult","malware"]
+categories = ["adult", "malware"]
 
 # base directory for blacklists
 base_dir = "/usr/local/py-squid-blacklists/blacklists/"
