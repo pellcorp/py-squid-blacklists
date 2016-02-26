@@ -36,7 +36,7 @@ db_backend = "ram"
 * Compatibility with python3 only
 * Filters for regex urls
 * Reduce memory footprint (wip with CDB backend alternative)
-* Code optimisation and cleaning (wip)
+* Code optimisation (profiling) and cleaning (wip)
 * Object oriented programming (wip)
 * Tests (wip)
 * ...
