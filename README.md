@@ -4,7 +4,7 @@ Squid helper handling squidguard blacklists written in python
 * Only supports domains blacklists actually (ie : google.com, www.google.com, mail.google.com, etc.)
 * In config specified blacklists are loaded in RAM or CDB backend using https://github.com/acg/python-cdb
 * Usable as an external acl plugin of squid
-* Written because of poor developpement on squidguard and some issues using blacklists on squid3
+* Written because of poor development on squidguard and some issues using blacklists on squid3
 
 ## Usage
 
@@ -17,27 +17,25 @@ acl urlblacklist external urlblacklist_lookup
 http_access deny urlblacklist
 ```
 
-config.py file must be include following statements
+Config file must be include following statements
 ```
-url = "http://dsi.ut-capitole.fr/blacklists/download/blacklists.tar.gz"
-base_dir = "/usr/local/py-squid-blacklists/blacklists/"
-categories = ["adult","malware"]
-db_backend = "ram"
+url = http://dsi.ut-capitole.fr/blacklists/download/blacklists.tar.gz
+base_dir = /usr/local/py-squid-blacklists/
+categories = adult,malware
+db_backend = cdb
 ```
 
 * url : squidguard-like blacklists files, this variable is not already usable
+* base_dir : root path containing blacklists files, metadata (update datetime)
 * categories : blacklists to use for filtering
-* base_dir : path containing blacklists files
 * db_backend : database flavour (ram|cdb)
 
 ## TODO
 
-* Auto-fetcher using url if blacklists are not already downloaded or stored on the squid machine
+* Auto-fetcher using url if blacklists are not already downloaded or stored on the squid machine (wip)
 * Compatibility with python3 only
 * Filters for regex urls
-* Reduce memory footprint (wip with CDB backend alternative)
 * Code optimisation (profiling) and cleaning (wip)
-* Object oriented programming (wip)
 * Tests (wip)
 * ...
 

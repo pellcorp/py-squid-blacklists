@@ -61,7 +61,6 @@ target/
 #Ipython Notebook
 .ipynb_checkpoints
 
-config.py
 blacklists
 blacklists.tar.gz
-pysquidblacklists/
+py-squid-blacklists.conf

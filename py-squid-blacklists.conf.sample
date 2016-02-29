@@ -1,0 +1,12 @@
+[main]
+# url to retrieve blacklists
+url = http://dsi.ut-capitole.fr/blacklists/download/blacklists.tar.gz
+
+# categories
+categories = adult,malware
+
+# base directory for blacklist extraction
+base_dir = /usr/local/py-squid-blacklists/
+
+# ram | cdb
+db_backend = cdb
