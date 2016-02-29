@@ -2,7 +2,7 @@
 from pysquidblacklists import *
 
 config = PySquidBlacklistsConfig()
-config.get_config()
+config.get_config(__file__)
 
 bli = PySquidBlacklistsImporter(config)
 bl = PySquidBlacklistsRunner(config, bli)

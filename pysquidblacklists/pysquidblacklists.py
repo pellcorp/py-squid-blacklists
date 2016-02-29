@@ -122,8 +122,8 @@ class PySquidBlacklistsConfig:
         self.config = configparser.RawConfigParser()
         self.config_path = None
 
-    def get_config(self):
-        self.get_path()
+    def get_config(self, pwd):
+        self.get_path(pwd)
         self.config.read(self.config_path)
         self.url = str(self.config.get("main", "url"))
         self.filename = self.url.split("/").pop()
@@ -138,11 +138,14 @@ class PySquidBlacklistsConfig:
     def set_config(self, section, attr):
         self.config.set(section, attr)
 
-    def get_path(self):
+    def get_path(self, pwd):
         filename = "py-squid-blacklists.conf"
-        config_path = "%s/%s" % (os.path.dirname(os.path.abspath(__name__)), filename)
+        config_path = "%s/%s" % (os.path.dirname(os.path.abspath(pwd)), filename)
+        default_config_path = "/etc/%s" % filename
 
         if os.path.exists(config_path):
             self.config_path = config_path
+        elif os.path.exists(default_config_path):
+            self.config_path = default_config_path
         else:
-            exit("No config file available at common paths. Must initialize it")
+            exit("No config file available at common paths (current dir or /etc). Must initialize it")
