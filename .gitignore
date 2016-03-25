@@ -61,6 +61,10 @@ target/
 #Ipython Notebook
 .ipynb_checkpoints
 
+# Assets
 blacklists
 blacklists.tar.gz
 py-squid-blacklists.conf
+
+# Others
+.idea/
